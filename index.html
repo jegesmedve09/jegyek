@@ -25,7 +25,6 @@
 </head>
 <body>
     <h1>Grades Viewer</h1>
-    <input type="file" id="fileInput" accept=".txt">
     <table>
         <thead>
             <tr>
@@ -38,39 +37,37 @@
     <h2 id="averageGrade">Average Grade: N/A</h2>
     
     <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const lines = e.target.result.split('\n');
-                let total = 0, count = 0;
-                
-                document.getElementById('gradesTable').innerHTML = "";
-                
-                lines.forEach(line => {
-                    let parts = line.split(/\s+/);
-                    let grade = parseFloat(parts.pop());
-                    let subject = parts.join(' ');
+        function loadGrades() {
+            fetch('grades.txt')
+                .then(response => response.text())
+                .then(text => {
+                    const lines = text.split('\n');
+                    let total = 0, count = 0;
+                    document.getElementById('gradesTable').innerHTML = "";
                     
-                    if (!isNaN(grade)) {
-                        total += grade;
-                        count++;
+                    lines.forEach(line => {
+                        let parts = line.trim().split(/\s+/);
+                        let grade = parseFloat(parts.pop());
+                        let subject = parts.join(' ');
+                        
+                        if (!isNaN(grade)) {
+                            total += grade;
+                            count++;
+                        }
+                        
+                        let row = `<tr><td>${subject}</td><td>${grade}</td></tr>`;
+                        document.getElementById('gradesTable').innerHTML += row;
+                    });
+                    
+                    if (count > 0) {
+                        let average = (total / count).toFixed(2);
+                        document.getElementById('averageGrade').textContent = `Average Grade: ${average}`;
                     }
-                    
-                    let row = `<tr><td>${subject}</td><td>${grade}</td></tr>`;
-                    document.getElementById('gradesTable').innerHTML += row;
-                });
-                
-                if (count > 0) {
-                    let average = (total / count).toFixed(2);
-                    document.getElementById('averageGrade').textContent = `Average Grade: ${average}`;
-                }
-            };
-            
-            reader.readAsText(file);
-        });
+                })
+                .catch(error => console.error('Error loading grades:', error));
+        }
+        
+        window.onload = loadGrades;
     </script>
 </body>
 </html>
