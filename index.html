@@ -46,17 +46,19 @@
                     document.getElementById('gradesTable').innerHTML = "";
                     
                     lines.forEach(line => {
-                        let parts = line.trim().split(/\s+/);
+                        let trimmedLine = line.trim();
+                        if (trimmedLine === "") return; // Skip empty lines
+                        
+                        let parts = trimmedLine.split(/\s+/);
                         let grade = parseFloat(parts.pop());
                         let subject = parts.join(' ');
                         
                         if (!isNaN(grade)) {
                             total += grade;
                             count++;
+                            let row = `<tr><td>${subject}</td><td>${grade}</td></tr>`;
+                            document.getElementById('gradesTable').innerHTML += row;
                         }
-                        
-                        let row = `<tr><td>${subject}</td><td>${grade}</td></tr>`;
-                        document.getElementById('gradesTable').innerHTML += row;
                     });
                     
                     if (count > 0) {
