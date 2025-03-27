@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Grades Viewer</h1>
+    <input type="file" id="fileInput" accept=".txt">
+    <table>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody id="gradesTable"></tbody>
+    </table>
+    <h2 id="averageGrade">Average Grade: N/A</h2>
+    
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const lines = e.target.result.split('\n');
+                let total = 0, count = 0;
+                
+                document.getElementById('gradesTable').innerHTML = "";
+                
+                lines.forEach(line => {
+                    let parts = line.split(/\s+/);
+                    let grade = parseFloat(parts.pop());
+                    let subject = parts.join(' ');
+                    
+                    if (!isNaN(grade)) {
+                        total += grade;
+                        count++;
+                    }
+                    
+                    let row = `<tr><td>${subject}</td><td>${grade}</td></tr>`;
+                    document.getElementById('gradesTable').innerHTML += row;
+                });
+                
+                if (count > 0) {
+                    let average = (total / count).toFixed(2);
+                    document.getElementById('averageGrade').textContent = `Average Grade: ${average}`;
+                }
+            };
+            
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>
