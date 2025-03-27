@@ -63,10 +63,10 @@
                     
                     if (count > 0) {
                         let average = (total / count).toFixed(2);
-                        document.getElementById('averageGrade').textContent = `Average Grade: ${average}`;
+                        document.getElementById('averageGrade').textContent = `Átlag: ${average}`;
                     }
                 })
-                .catch(error => console.error('Error loading grades:', error));
+                .catch(error => console.error('Olvasás hiba:', error));
         }
         
         window.onload = loadGrades;
